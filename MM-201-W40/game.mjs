@@ -115,7 +115,7 @@ async function askWantToPlayAgain() {
 function showGameSummary(outcome) {
     clearScreen();
     let winningPlayer = (outcome > 0) ? 1 : 2;
-    print("Winner is player " + winningPlayer);
+    print("Winner: Player " + winningPlayer + "!");
     showGameBoardWithCurrentState();
     print("GAME OVER");
 }
@@ -198,11 +198,11 @@ function isValidPositionOnBoard(position) {
 }
 
 function showHUD() {
-    let playerDescription = "one";
+    let playerDescription = "1";
     if (PLAYER_2 == currentPlayer) {
-        playerDescription = "two";
+        playerDescription = "2";
     }
-    print("Player " + playerDescription + " it is your turn");
+    print("Player " + playerDescription + ", it's your turn!");
 }
 
 function showGameBoardWithCurrentState() {
@@ -216,7 +216,7 @@ function showGameBoardWithCurrentState() {
             else if (cell > 0) {
                 rowOutput += "X ";
             } else {
-                rowOutput += "O  ";
+                rowOutput += "O ";
             }
         }
 
