@@ -24,7 +24,7 @@ let currentPlayer;
 
 clearScreen();
 showSplashScreen();
-setTimeout(start, 2500); // This waites 2.5seconds before calling the function. i.e. we get to see the splash screen for 2.5 seconds before the menu takes over. 
+setTimeout(start, 2500); // This waits 2.5seconds before calling the function. i.e. we get to see the splash screen for 2.5 seconds before the menu takes over. 
 
 
 
@@ -92,7 +92,7 @@ async function playGame() {
         clearScreen();
         showGameBoardWithCurrentState();
         showHUD();
-        let move = await getGameMoveFromtCurrentPlayer();
+        let move = await getGameMoveFromTheCurrentPlayer();
         updateGameBoardState(move);
         outcome = evaluateGameState();
         changeCurrentPlayer();
@@ -113,11 +113,19 @@ async function askWantToPlayAgain() {
 }
 
 function showGameSummary(outcome) {
-    clearScreen();
-    let winningPlayer = (outcome > 0) ? 1 : 2;
-    print(ANSI.COLOR.GREEN + "Winner: " + ANSI.RESET + "Player " + winningPlayer + "!");
-    showGameBoardWithCurrentState();
-    print("GAME OVER");
+    if (outcome != 0) {
+        clearScreen();
+        let winningPlayer = (outcome > 0) ? 1 : 2;
+        print(ANSI.COLOR.GREEN + "Winner: " + ANSI.RESET + "Player " + winningPlayer + "!");
+        showGameBoardWithCurrentState();
+        print("GAME OVER");
+    }
+    else if (outcome == 0) {
+        clearScreen();
+        print(ANSI.COLOR.BLUE + "It's a Draw!" + ANSI.RESET);
+        showGameBoardWithCurrentState();
+        print("GAME OVER");
+    }
 }
 
 function changeCurrentPlayer() {
@@ -125,21 +133,27 @@ function changeCurrentPlayer() {
 }
 
 function evaluateGameState() {
-    let sum = 0;
     let state = 0;
+    let boardIsFull = true
+    let sum = 0;
 
+    sum = 0;
     for (let row = 0; row < GAME_BOARD_SIZE; row++) {
-
+        
         for (let col = 0; col < GAME_BOARD_SIZE; col++) {
             sum += gameboard[row][col];
+
+            if (gameboard[row][col] == 0) {
+                boardIsFull = false;
+            }
         }
 
         if (Math.abs(sum) == GAME_BOARD_SIZE) {
             state = sum;
         }
-        sum = 0;
     }
 
+    sum = 0;
     for (let col = 0; col < GAME_BOARD_SIZE; col++) {
 
         for (let row = 0; row < GAME_BOARD_SIZE; row++) {
@@ -149,22 +163,18 @@ function evaluateGameState() {
         if (Math.abs(sum) == GAME_BOARD_SIZE) {
             state = sum;
         }
-
-        sum = 0;
     }
-
+    
+    sum = 0;
     for (let rDiagonal = 0; rDiagonal < GAME_BOARD_SIZE; rDiagonal++) {
         sum += gameboard[rDiagonal][rDiagonal];
 
         if (Math.abs(sum) == GAME_BOARD_SIZE) {
             state = sum;
         }
-
-        
     }
 
     sum = 0;
-
     for (let lDiagonal = GAME_BOARD_SIZE - 1; lDiagonal >= 0; lDiagonal--) {
         sum += gameboard[lDiagonal][GAME_BOARD_SIZE - 1 - lDiagonal]
 
@@ -172,11 +182,8 @@ function evaluateGameState() {
             state = sum;
         }
 
-        
     }
 
-    sum = 0;
-    
     let winner = state / GAME_BOARD_SIZE;
     return winner;
 }
@@ -187,7 +194,7 @@ function updateGameBoardState(move) {
     gameboard[move[ROW_ID]][move[COLUMN_ID]] = currentPlayer;
 }
 
-async function getGameMoveFromtCurrentPlayer() {
+async function getGameMoveFromTheCurrentPlayer() {
     let position = null;
     do {
         let rawInput = await askQuestion("Place your mark at: ");
@@ -208,7 +215,8 @@ function isValidPositionOnBoard(position) {
     if (position[0] * 1 != position[0] && position[1] * 1 != position[1]) {
         // Not Numbers
         inputWasCorrect = false;
-    } else if (position[0] > GAME_BOARD_SIZE && position[1] > GAME_BOARD_SIZE) {
+    } 
+    else if (position[0] > GAME_BOARD_SIZE && position[1] > GAME_BOARD_SIZE) {
         // Not on board
         inputWasCorrect = false;
     }
