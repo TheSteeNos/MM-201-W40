@@ -134,7 +134,7 @@ function evaluateGameState() {
             sum += gameboard[row][col];
         }
 
-        if (Math.abs(sum) == 3) {
+        if (Math.abs(sum) == GAME_BOARD_SIZE) {
             state = sum;
         }
         sum = 0;
@@ -146,14 +146,38 @@ function evaluateGameState() {
             sum += gameboard[row][col];
         }
 
-        if (Math.abs(sum) == 3) {
+        if (Math.abs(sum) == GAME_BOARD_SIZE) {
             state = sum;
         }
 
         sum = 0;
     }
 
-    let winner = state / 3;
+    for (let rDiagonal = 0; rDiagonal < GAME_BOARD_SIZE; rDiagonal++) {
+        sum += gameboard[rDiagonal][rDiagonal];
+
+        if (Math.abs(sum) == GAME_BOARD_SIZE) {
+            state = sum;
+        }
+
+        
+    }
+
+    sum = 0;
+
+    for (let lDiagonal = GAME_BOARD_SIZE - 1; lDiagonal >= 0; lDiagonal--) {
+        sum += gameboard[lDiagonal][GAME_BOARD_SIZE - 1 - lDiagonal]
+
+        if (Math.abs(sum) == GAME_BOARD_SIZE) {
+            state = sum;
+        }
+
+        
+    }
+
+    sum = 0;
+    
+    let winner = state / GAME_BOARD_SIZE;
     return winner;
 }
 
