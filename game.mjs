@@ -134,7 +134,6 @@ function changeCurrentPlayer() {
 }
 
 function evaluateGameState() {
-    let state = 0;
     let boardIsFull = true;
     let sum = 0;
     let rDiagonalSum = 0;
