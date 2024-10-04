@@ -8,6 +8,8 @@ const TERMS = {
         GAMEOVER: "GAME OVER",
         SPACE: " ",
         EMPTY: "",
+        PLAY_AGAIN_QUESTION: "Play again (Yes/No)? ",
+        CONFIRM: "y",
         PLAYERPROMPTS: {
             PLACE: "Place your mark at: ",
             TURN1: "Player ",
@@ -26,6 +28,10 @@ const TERMS = {
             X: "X ",
             O: "O ",
             _: "_ "
+        },
+        OPT: {
+            ENG: "1. English",
+            NOR: "2. Norwegian"
         }
     },
 
@@ -38,6 +44,8 @@ const TERMS = {
         GAMEOVER: "Spillet er Over!",
         SPACE: " ",
         EMPTY: "",
+        PLAY_AGAIN_QUESTION: "Spille en gang til (Ja/Nei)? ",
+        CONFIRM: "j",
         PLAYERPROMPTS: {
             PLACE: "Plasser ditt merke ved: ",
             TURN1: "Spiller ",
@@ -56,6 +64,10 @@ const TERMS = {
             X: "X ",
             O: "O ",
             _: "_ "
+        },
+        OPT: {
+            ENG: "1. Engelsk",
+            NOR: "2. Norsk"
         }
     }  
 }

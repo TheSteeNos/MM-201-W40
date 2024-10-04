@@ -1,15 +1,15 @@
 import { print, askQuestion } from "./io.mjs"
 import { debug, DEBUG_LEVELS } from "./debug.mjs";
 import { ANSI } from "./ansi.mjs";
-import DICTIONARY from "./language.mjs";
 import showSplashScreen from "./splash.mjs";
 import { TERMS } from "./terms.mjs";
 
 const GAME_BOARD_SIZE = 3;
 const PLAYER_1 = 1;
 const PLAYER_2 = -1;
+const DECIDED_LANGUAGE_IS_ENGLISH = 1;
+const DECIDED_LANGUAGE_IS_NORWEGIAN = 2;
 
-// These are the valid choices for the menu.
 const MENU_CHOICES = {
     MENU_CHOICE_START_GAME: 1,
     MENU_CHOICE_SHOW_SETTINGS: 2,
@@ -18,14 +18,14 @@ const MENU_CHOICES = {
 
 const NO_CHOICE = -1;
 
-let language = DICTIONARY.en;
+let language = TERMS.EN;
 let gameboard;
 let currentPlayer;
 
 
 clearScreen();
 showSplashScreen();
-setTimeout(start, 2500); // This waits 2.5seconds before calling the function. i.e. we get to see the splash screen for 2.5 seconds before the menu takes over. 
+setTimeout(start, 2500);
 
 
 
@@ -41,7 +41,7 @@ async function start() {
         if (chosenAction == MENU_CHOICES.MENU_CHOICE_START_GAME) {
             await runGame();
         } else if (chosenAction == MENU_CHOICES.MENU_CHOICE_SHOW_SETTINGS) {
-            ///TODO: Needs implementing
+            await showSettings();
         } else if (chosenAction == MENU_CHOICES.MENU_CHOICE_EXIT_GAME) {
             clearScreen();
             process.exit();
@@ -55,35 +55,56 @@ async function runGame() {
 
     let isPlaying = true;
 
-    while (isPlaying) { // Do the following until the player dos not want to play anymore. 
-        initializeGame(); // Reset everything related to playing the game
-        isPlaying = await playGame(); // run the actual game 
+    while (isPlaying) {
+        initializeGame();
+        isPlaying = await playGame();
     }
 }
 
 async function showMenu() {
 
-    let choice = -1;  // This variable tracks the choice the player has made. We set it to -1 initially because that is not a valid choice.
-    let validChoice = false;    // This variable tells us if the choice the player has made is one of the valid choices. It is initially set to false because the player has made no choices.
+    let choice = -1;
+    let validChoice = false;
 
     while (!validChoice) {
-        // Display our menu to the player.
         clearScreen();
-        print(ANSI.COLOR.YELLOW + TERMS.MENU + ANSI.RESET);
-        print(ANSI.COLOR.GREEN + TERMS.PLAY + ANSI.RESET);
-        print(TERMS.SETTINGS + ANSI.RESET);
-        print(ANSI.COLOR.RED + TERMS.EXIT + ANSI.RESET);
+        print(ANSI.COLOR.YELLOW + language.MENU + ANSI.RESET);
+        print(ANSI.COLOR.GREEN + language.PLAY + ANSI.RESET);
+        print(ANSI.COLOR.BLUE + language.SETTINGS + ANSI.RESET);
+        print(ANSI.COLOR.RED + language.EXIT + ANSI.RESET);
 
-        // Wait for the choice.
-        choice = await askQuestion(TERMS.EMPTY);
+        choice = await askQuestion(language.EMPTY);
 
-        // Check to see if the choice is valid.
         if ([MENU_CHOICES.MENU_CHOICE_START_GAME, MENU_CHOICES.MENU_CHOICE_SHOW_SETTINGS, MENU_CHOICES.MENU_CHOICE_EXIT_GAME].includes(Number(choice))) {
             validChoice = true;
         }
     }
 
     return choice;
+}
+
+async function showSettings() {
+    let choice = -1;
+    let validChoice = false;
+
+    while (!validChoice) {
+        clearScreen();
+        print(language.OPT.ENG);
+        print(language.OPT.NOR);
+        
+
+        choice = await askQuestion(language.EMPTY);
+
+        if ([DECIDED_LANGUAGE_IS_ENGLISH, DECIDED_LANGUAGE_IS_NORWEGIAN].includes(Number(choice))) {
+            validChoice = true;
+            }
+
+            if (Number(choice) == DECIDED_LANGUAGE_IS_ENGLISH) {
+            language = TERMS.EN;
+            } else if (Number(choice) == DECIDED_LANGUAGE_IS_NORWEGIAN) {
+            language = TERMS.NO;
+        }
+    }
 }
 
 async function playGame() {
@@ -117,15 +138,15 @@ function showGameSummary(outcome) {
     if (outcome != 0) {
         clearScreen();
         let winningPlayer = (outcome > 0) ? 1 : 2;
-        print(ANSI.COLOR.GREEN + TERMS.WINNER.PART1 + ANSI.RESET + TERMS.WINNER.PART2 + winningPlayer + TERMS.WINNER.PART3);
+        print(ANSI.COLOR.GREEN + language.WINNER.PART1 + ANSI.RESET + language.WINNER.PART2 + winningPlayer + language.WINNER.PART3);
         showGameBoardWithCurrentState();
-        print(TERMS.GAMEOVER);
+        print(language.GAMEOVER);
     }
     else if (outcome == 0) {
         clearScreen();
-        print(ANSI.COLOR.BLUE + TERMS.DRAW + ANSI.RESET);
+        print(ANSI.COLOR.BLUE + language.DRAW + ANSI.RESET);
         showGameBoardWithCurrentState();
-        print(TERMS.GAMEOVER);
+        print(language.GAMEOVER);
     }
 }
 
@@ -201,8 +222,8 @@ function updateGameBoardState(move) {
 async function getGameMoveFromTheCurrentPlayer() {
     let position = null;
     do {
-        let rawInput = await askQuestion(TERMS.PLAYERPROMPTS.PLACE);
-        position = rawInput.split(TERMS.SPACE);
+        let rawInput = await askQuestion(language.PLAYERPROMPTS.PLACE);
+        position = rawInput.split(language.SPACE);
     } while (isValidPositionOnBoard(position) == false)
 
     return position
@@ -211,7 +232,6 @@ async function getGameMoveFromTheCurrentPlayer() {
 function isValidPositionOnBoard(position) {
 
     if (position.length < 2) {
-        // We where not given two numbers or more.
         return false;
     }
 
@@ -234,25 +254,25 @@ function isValidPositionOnBoard(position) {
 }
 
 function showHUD() {
-    let playerDescription = TERMS.PLAYER.ONE;
+    let playerDescription = language.PLAYER.ONE;
     if (PLAYER_2 == currentPlayer) {
-        playerDescription = TERMS.PLAYER.TWO;
+        playerDescription = language.PLAYER.TWO;
     }
-    print(TERMS.PLAYERPROMPTS.TURN1 + playerDescription + TERMS.PLAYERPROMPTS.TURN2);
+    print(language.PLAYERPROMPTS.TURN1 + playerDescription + language.PLAYERPROMPTS.TURN2);
 }
 
 function showGameBoardWithCurrentState() {
     for (let currentRow = 0; currentRow < GAME_BOARD_SIZE; currentRow++) {
-        let rowOutput = TERMS.EMPTY;
+        let rowOutput = language.EMPTY;
         for (let currentCol = 0; currentCol < GAME_BOARD_SIZE; currentCol++) {
             let cell = gameboard[currentRow][currentCol];
             if (cell == 0) {
-                rowOutput += ANSI.COLOR.YELLOW + TERMS.MARKS._ + ANSI.RESET;
+                rowOutput += ANSI.COLOR.YELLOW + language.MARKS._ + ANSI.RESET;
             }
             else if (cell > 0) {
-                rowOutput += ANSI.COLOR.RED + TERMS.MARKS.X + ANSI.RESET;
+                rowOutput += ANSI.COLOR.RED + language.MARKS.X + ANSI.RESET;
             } else {
-                rowOutput += ANSI.COLOR.GREEN + TERMS.MARKS.O + ANSI.RESET;
+                rowOutput += ANSI.COLOR.GREEN + language.MARKS.O + ANSI.RESET;
             }
         }
 
