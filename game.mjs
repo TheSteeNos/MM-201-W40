@@ -265,27 +265,22 @@ async function getGameMoveFromTheCurrentPlayer() {
 }
 
 function isValidPositionOnBoard(position) {
-
-    if (position.length < 2) {
+    if (position.length !== 2) {
         return false;
     }
 
-    let isValidInput = true;
-    if (position[0] * 1 != position[0] && position[1] * 1 != position[1]) {
-        // Not Numbers
-        inputWasCorrect = false;
-    } 
-    else if (position[0] > GAME_BOARD_SIZE && position[1] > GAME_BOARD_SIZE) {
-        // Not on board
-        inputWasCorrect = false;
-    }
-    else if (Number.parseInt(position[0]) != position[0] && Number.parseInt(position[1]) != position[1]) {
-        // Position taken.
-        inputWasCorrect = false;
+    const row = Number(position[0]);
+    const col = Number(position[1]);
+
+    if (isNaN(row) || isNaN(col) || row < 1 || row > GAME_BOARD_SIZE || col < 1 || col > GAME_BOARD_SIZE) {
+        return false;
     }
 
+    if (gameboard[row - 1][col - 1] !== 0) {
+        return false;
+    }
 
-    return isValidInput;
+    return true;
 }
 
 function showHUD() {
