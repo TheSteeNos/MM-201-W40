@@ -135,12 +135,13 @@ function changeCurrentPlayer() {
 
 function evaluateGameState() {
     let state = 0;
-    let boardIsFull = true
+    let boardIsFull = true;
     let sum = 0;
+    let rDiagonalSum = 0;
+    let lDiagonalSum = 0;
 
-    sum = 0;
     for (let row = 0; row < GAME_BOARD_SIZE; row++) {
-        
+        sum = 0;
         for (let col = 0; col < GAME_BOARD_SIZE; col++) {
             sum += gameboard[row][col];
 
@@ -154,9 +155,9 @@ function evaluateGameState() {
         }
     }
 
-    sum = 0;
+    
     for (let col = 0; col < GAME_BOARD_SIZE; col++) {
-
+        sum = 0;
         for (let row = 0; row < GAME_BOARD_SIZE; row++) {
             sum += gameboard[row][col];
         }
@@ -166,21 +167,21 @@ function evaluateGameState() {
         }
     }
     
-    sum = 0;
+    rDiagonalSum = 0;
     for (let rDiagonal = 0; rDiagonal < GAME_BOARD_SIZE; rDiagonal++) {
-        sum += gameboard[rDiagonal][rDiagonal];
+        rDiagonalSum += gameboard[rDiagonal][rDiagonal];
 
-        if (Math.abs(sum) == GAME_BOARD_SIZE) {
-            state = sum;
+        if (Math.abs(rDiagonalSum) == GAME_BOARD_SIZE) {
+            state = rDiagonalSum;
         }
     }
 
-    sum = 0;
+    lDiagonalSum = 0;
     for (let lDiagonal = GAME_BOARD_SIZE - 1; lDiagonal >= 0; lDiagonal--) {
-        sum += gameboard[lDiagonal][GAME_BOARD_SIZE - 1 - lDiagonal]
+        lDiagonalSum += gameboard[lDiagonal][GAME_BOARD_SIZE - 1 - lDiagonal];
 
-        if (Math.abs(sum) == GAME_BOARD_SIZE) {
-            state = sum;
+        if (Math.abs(lDiagonalSum) == GAME_BOARD_SIZE) {
+            state = lDiagonalSum;
         }
 
     }
