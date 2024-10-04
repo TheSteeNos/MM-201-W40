@@ -24,7 +24,7 @@ let currentPlayer;
 
 clearScreen();
 showSplashScreen();
-setTimeout(start, 2500); // This waites 2.5seconds before calling the function. i.e. we get to see the splash screen for 2.5 seconds before the menue takes over. 
+setTimeout(start, 2500); // This waites 2.5seconds before calling the function. i.e. we get to see the splash screen for 2.5 seconds before the menu takes over. 
 
 
 
@@ -69,9 +69,9 @@ async function showMenu() {
         // Display our menu to the player.
         clearScreen();
         print(ANSI.COLOR.YELLOW + "MENU" + ANSI.RESET);
-        print("1. Play Game");
-        print("2. Settings");
-        print("3. Exit Game");
+        print(ANSI.COLOR.GREEN + "1. Play Game" + ANSI.RESET);
+        print("2. Settings" + ANSI.RESET);
+        print(ANSI.COLOR.RED + "3. Exit Game" + ANSI.RESET);
 
         // Wait for the choice.
         choice = await askQuestion("");
@@ -115,7 +115,7 @@ async function askWantToPlayAgain() {
 function showGameSummary(outcome) {
     clearScreen();
     let winningPlayer = (outcome > 0) ? 1 : 2;
-    print("Winner: Player " + winningPlayer + "!");
+    print(ANSI.COLOR.GREEN + "Winner: " + ANSI.RESET + "Player " + winningPlayer + "!");
     showGameBoardWithCurrentState();
     print("GAME OVER");
 }
@@ -211,12 +211,12 @@ function showGameBoardWithCurrentState() {
         for (let currentCol = 0; currentCol < GAME_BOARD_SIZE; currentCol++) {
             let cell = gameboard[currentRow][currentCol];
             if (cell == 0) {
-                rowOutput += "_ ";
+                rowOutput += ANSI.COLOR.YELLOW + "_ " + ANSI.RESET;
             }
             else if (cell > 0) {
-                rowOutput += "X ";
+                rowOutput += ANSI.COLOR.RED + "X " + ANSI.RESET;
             } else {
-                rowOutput += "O ";
+                rowOutput += ANSI.COLOR.GREEN + "O " + ANSI.RESET;
             }
         }
 
