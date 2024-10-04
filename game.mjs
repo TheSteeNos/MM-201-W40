@@ -3,6 +3,7 @@ import { debug, DEBUG_LEVELS } from "./debug.mjs";
 import { ANSI } from "./ansi.mjs";
 import DICTIONARY from "./language.mjs";
 import showSplashScreen from "./splash.mjs";
+import { TERMS } from "./terms.mjs";
 
 const GAME_BOARD_SIZE = 3;
 const PLAYER_1 = 1;
@@ -68,13 +69,13 @@ async function showMenu() {
     while (!validChoice) {
         // Display our menu to the player.
         clearScreen();
-        print(ANSI.COLOR.YELLOW + "MENU" + ANSI.RESET);
-        print(ANSI.COLOR.GREEN + "1. Play Game" + ANSI.RESET);
-        print("2. Settings" + ANSI.RESET);
-        print(ANSI.COLOR.RED + "3. Exit Game" + ANSI.RESET);
+        print(ANSI.COLOR.YELLOW + TERMS.MENU + ANSI.RESET);
+        print(ANSI.COLOR.GREEN + TERMS.PLAY + ANSI.RESET);
+        print(TERMS.SETTINGS + ANSI.RESET);
+        print(ANSI.COLOR.RED + TERMS.EXIT + ANSI.RESET);
 
         // Wait for the choice.
-        choice = await askQuestion("");
+        choice = await askQuestion(TERMS.EMPTY);
 
         // Check to see if the choice is valid.
         if ([MENU_CHOICES.MENU_CHOICE_START_GAME, MENU_CHOICES.MENU_CHOICE_SHOW_SETTINGS, MENU_CHOICES.MENU_CHOICE_EXIT_GAME].includes(Number(choice))) {
@@ -116,15 +117,15 @@ function showGameSummary(outcome) {
     if (outcome != 0) {
         clearScreen();
         let winningPlayer = (outcome > 0) ? 1 : 2;
-        print(ANSI.COLOR.GREEN + "Winner: " + ANSI.RESET + "Player " + winningPlayer + "!");
+        print(ANSI.COLOR.GREEN + TERMS.WINNER.PART1 + ANSI.RESET + TERMS.WINNER.PART2 + winningPlayer + TERMS.WINNER.PART3);
         showGameBoardWithCurrentState();
-        print("GAME OVER");
+        print(TERMS.GAMEOVER);
     }
     else if (outcome == 0) {
         clearScreen();
-        print(ANSI.COLOR.BLUE + "It's a Draw!" + ANSI.RESET);
+        print(ANSI.COLOR.BLUE + TERMS.DRAW + ANSI.RESET);
         showGameBoardWithCurrentState();
-        print("GAME OVER");
+        print(TERMS.GAMEOVER);
     }
 }
 
@@ -197,8 +198,8 @@ function updateGameBoardState(move) {
 async function getGameMoveFromTheCurrentPlayer() {
     let position = null;
     do {
-        let rawInput = await askQuestion("Place your mark at: ");
-        position = rawInput.split(" ");
+        let rawInput = await askQuestion(TERMS.PLAYERPROMPTS.PLACE);
+        position = rawInput.split(TERMS.SPACE);
     } while (isValidPositionOnBoard(position) == false)
 
     return position
@@ -230,25 +231,25 @@ function isValidPositionOnBoard(position) {
 }
 
 function showHUD() {
-    let playerDescription = "1";
+    let playerDescription = TERMS.PLAYER.ONE;
     if (PLAYER_2 == currentPlayer) {
-        playerDescription = "2";
+        playerDescription = TERMS.PLAYER.TWO;
     }
-    print("Player " + playerDescription + ", it's your turn!");
+    print(TERMS.PLAYERPROMPTS.TURN1 + playerDescription + TERMS.PLAYERPROMPTS.TURN2);
 }
 
 function showGameBoardWithCurrentState() {
     for (let currentRow = 0; currentRow < GAME_BOARD_SIZE; currentRow++) {
-        let rowOutput = "";
+        let rowOutput = TERMS.EMPTY;
         for (let currentCol = 0; currentCol < GAME_BOARD_SIZE; currentCol++) {
             let cell = gameboard[currentRow][currentCol];
             if (cell == 0) {
-                rowOutput += ANSI.COLOR.YELLOW + "_ " + ANSI.RESET;
+                rowOutput += ANSI.COLOR.YELLOW + TERMS.MARKS._ + ANSI.RESET;
             }
             else if (cell > 0) {
-                rowOutput += ANSI.COLOR.RED + "X " + ANSI.RESET;
+                rowOutput += ANSI.COLOR.RED + TERMS.MARKS.X + ANSI.RESET;
             } else {
-                rowOutput += ANSI.COLOR.GREEN + "O " + ANSI.RESET;
+                rowOutput += ANSI.COLOR.GREEN + TERMS.MARKS.O + ANSI.RESET;
             }
         }
 
