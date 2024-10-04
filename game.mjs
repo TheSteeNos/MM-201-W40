@@ -12,8 +12,9 @@ const DECIDED_LANGUAGE_IS_NORWEGIAN = 2;
 
 const MENU_CHOICES = {
     MENU_CHOICE_START_GAME: 1,
-    MENU_CHOICE_SHOW_SETTINGS: 2,
-    MENU_CHOICE_EXIT_GAME: 3
+    MENU_CHOICE_START_GAME_VS_COMPUTER: 2,
+    MENU_CHOICE_SHOW_SETTINGS: 3,
+    MENU_CHOICE_EXIT_GAME: 4
 };
 
 const NO_CHOICE = -1;
@@ -40,7 +41,9 @@ async function start() {
 
         if (chosenAction == MENU_CHOICES.MENU_CHOICE_START_GAME) {
             await runGame();
-        } else if (chosenAction == MENU_CHOICES.MENU_CHOICE_SHOW_SETTINGS) {
+        }else if (chosenAction == MENU_CHOICES.MENU_CHOICE_START_GAME_VS_COMPUTER) {
+            await runGameVsCpu(); 
+        }else if (chosenAction == MENU_CHOICES.MENU_CHOICE_SHOW_SETTINGS) {
             await showSettings();
         } else if (chosenAction == MENU_CHOICES.MENU_CHOICE_EXIT_GAME) {
             clearScreen();
@@ -61,6 +64,16 @@ async function runGame() {
     }
 }
 
+async function runGameVsCpu() {
+
+    let isPlaying = true;
+
+    while (isPlaying) {
+        initializeGame();
+        isPlaying = await playGameVsCpu();
+    }
+}
+
 async function showMenu() {
 
     let choice = -1;
@@ -68,14 +81,15 @@ async function showMenu() {
 
     while (!validChoice) {
         clearScreen();
-        print(ANSI.COLOR.YELLOW + language.MENU + ANSI.RESET);
+        print(language.MENU + ANSI.RESET);
         print(ANSI.COLOR.GREEN + language.PLAY + ANSI.RESET);
-        print(ANSI.COLOR.BLUE + language.SETTINGS + ANSI.RESET);
+        print(ANSI.COLOR.BLUE + language.PLAYCPU + ANSI.RESET);
+        print(ANSI.COLOR.YELLOW + language.SETTINGS + ANSI.RESET);
         print(ANSI.COLOR.RED + language.EXIT + ANSI.RESET);
 
         choice = await askQuestion(language.EMPTY);
 
-        if ([MENU_CHOICES.MENU_CHOICE_START_GAME, MENU_CHOICES.MENU_CHOICE_SHOW_SETTINGS, MENU_CHOICES.MENU_CHOICE_EXIT_GAME].includes(Number(choice))) {
+        if ([MENU_CHOICES.MENU_CHOICE_START_GAME, MENU_CHOICES.MENU_CHOICE_START_GAME_VS_COMPUTER, MENU_CHOICES.MENU_CHOICE_SHOW_SETTINGS, MENU_CHOICES.MENU_CHOICE_EXIT_GAME].includes(Number(choice))) {
             validChoice = true;
         }
     }
@@ -89,8 +103,9 @@ async function showSettings() {
 
     while (!validChoice) {
         clearScreen();
-        print(language.OPT.ENG);
-        print(language.OPT.NOR);
+        print(language.OPT.TITLE)
+        print(ANSI.COLOR.BLUE + language.OPT.ENG + ANSI.RESET);
+        print(ANSI.COLOR.RED + language.OPT.NOR + ANSI.RESET);
         
 
         choice = await askQuestion(language.EMPTY);
@@ -118,6 +133,26 @@ async function playGame() {
         outcome = evaluateGameState();
         if (outcome === null) {
             changeCurrentPlayer();
+        }
+    } while (outcome == null)
+
+    showGameSummary(outcome);
+    return await askWantToPlayAgain();
+}
+
+async function playGameVsCpu() {
+    let outcome = null;
+    do {
+        clearScreen();
+        showGameBoardWithCurrentState();
+        showHUD();
+        let move = await getGameMoveFromTheCurrentPlayer();
+        updateGameBoardState(move);
+        outcome = evaluateGameState();
+        
+        if (outcome === null) {
+            cpuPlays();
+            outcome = evaluateGameState();
         }
     } while (outcome == null)
 
@@ -305,6 +340,18 @@ function clearScreen() {
     console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME, ANSI.RESET);
 }
 
+function cpuPlays() {
+    let validMove = false;
+
+    while (!validMove) {
+        const row = Math.floor(Math.random() * GAME_BOARD_SIZE) + 1;
+        const col = Math.floor(Math.random() * GAME_BOARD_SIZE) + 1;
+        
+        if (isValidPositionOnBoard([row, col])) {
+            gameboard[row - 1][col - 1] = PLAYER_2;
+            validMove = true;
+        }
+    }
+}
 
 //#endregion
-

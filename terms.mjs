@@ -3,8 +3,9 @@ const TERMS = {
         DRAW: "It's a Draw!",
         MENU: "MENU",
         PLAY: "1. Play Game",
-        SETTINGS: "2. Settings",
-        EXIT: "3. Exit Game",
+        PLAYCPU: "2: Play vs Computer",
+        SETTINGS: "3. Settings",
+        EXIT: "4. Exit Game",
         GAMEOVER: "GAME OVER",
         SPACE: " ",
         EMPTY: "",
@@ -30,8 +31,9 @@ const TERMS = {
             _: "_ "
         },
         OPT: {
-            ENG: "1. English",
-            NOR: "2. Norwegian"
+            TITLE: "Language:",
+            ENG: "  1. English",
+            NOR: "  2. Norwegian"
         }
     },
 
@@ -39,8 +41,9 @@ const TERMS = {
         DRAW: "Uavgjort!",
         MENU: "MENY",
         PLAY: "1. Spill Spillet",
-        SETTINGS: "2. Instillinger",
-        EXIT: "3. Avslutt Spill",
+        PLAYCPU: "2: Spill mot Maskinen",
+        SETTINGS: "3. Instillinger",
+        EXIT: "4. Avslutt Spill",
         GAMEOVER: "Spillet er Over!",
         SPACE: " ",
         EMPTY: "",
@@ -66,8 +69,9 @@ const TERMS = {
             _: "_ "
         },
         OPT: {
-            ENG: "1. Engelsk",
-            NOR: "2. Norsk"
+            TITLE: "Språk:",
+            ENG: "  1. Engelsk",
+            NOR: "  2. Norsk"
         }
     }  
 }
