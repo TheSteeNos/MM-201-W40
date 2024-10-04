@@ -87,8 +87,7 @@ async function showMenu() {
 }
 
 async function playGame() {
-    // Play game..
-    let outcome;
+    let outcome = null;
     do {
         clearScreen();
         showGameBoardWithCurrentState();
@@ -96,11 +95,12 @@ async function playGame() {
         let move = await getGameMoveFromTheCurrentPlayer();
         updateGameBoardState(move);
         outcome = evaluateGameState();
-        changeCurrentPlayer();
-    } while (outcome == 0)
+        if (outcome === null) {
+            changeCurrentPlayer();
+        }
+    } while (outcome == null)
 
     showGameSummary(outcome);
-
     return await askWantToPlayAgain();
 }
 
@@ -151,43 +151,46 @@ function evaluateGameState() {
         }
 
         if (Math.abs(sum) == GAME_BOARD_SIZE) {
-            state = sum;
+            return sum / GAME_BOARD_SIZE;
         }
     }
 
-    
     for (let col = 0; col < GAME_BOARD_SIZE; col++) {
         sum = 0;
         for (let row = 0; row < GAME_BOARD_SIZE; row++) {
             sum += gameboard[row][col];
-        }
+        
 
         if (Math.abs(sum) == GAME_BOARD_SIZE) {
-            state = sum;
+            return sum / GAME_BOARD_SIZE;
         }
     }
-    
+
     rDiagonalSum = 0;
     for (let rDiagonal = 0; rDiagonal < GAME_BOARD_SIZE; rDiagonal++) {
         rDiagonalSum += gameboard[rDiagonal][rDiagonal];
+    }
 
         if (Math.abs(rDiagonalSum) == GAME_BOARD_SIZE) {
-            state = rDiagonalSum;
-        }
+        return rDiagonalSum / GAME_BOARD_SIZE;
+     }
     }
-
+     
     lDiagonalSum = 0;
-    for (let lDiagonal = GAME_BOARD_SIZE - 1; lDiagonal >= 0; lDiagonal--) {
+    for (let lDiagonal = 0; lDiagonal < GAME_BOARD_SIZE; lDiagonal++) {
         lDiagonalSum += gameboard[lDiagonal][GAME_BOARD_SIZE - 1 - lDiagonal];
+    
 
         if (Math.abs(lDiagonalSum) == GAME_BOARD_SIZE) {
-            state = lDiagonalSum;
+        return lDiagonalSum / GAME_BOARD_SIZE;
         }
-
     }
 
-    let winner = state / GAME_BOARD_SIZE;
-    return winner;
+    if (boardIsFull) {
+        return 0;
+    }
+
+    return null;
 }
 
 function updateGameBoardState(move) {
